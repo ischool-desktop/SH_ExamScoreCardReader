@@ -21,7 +21,7 @@ namespace SH_ExamScoreCardReader
             RibbonBarButton importButton = rbItem["匯入讀卡成績"];
             importButton.Size = RibbonBarButton.MenuButtonSize.Large;
             importButton.Enable = Permissions.匯入讀卡成績權限;
-            importButton.Image = Properties.Resources.proyector_save_64;
+            importButton.Image = Properties.Resources.byte_add_64;
             importButton.Click += delegate
             {
                 ImportStartupForm form = new ImportStartupForm();
@@ -46,7 +46,7 @@ namespace SH_ExamScoreCardReader
 
             RibbonBarButton subjectButton = rbItem["科目代碼設定"];
             subjectButton.Size = RibbonBarButton.MenuButtonSize.Small;
-            subjectButton.Enable = Permissions.科目代碼設定權限; ;
+            subjectButton.Enable = Permissions.科目代碼設定權限;
             subjectButton.Click += delegate
             {
                 new SubjectCodeConfig().ShowDialog();

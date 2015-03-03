@@ -63,6 +63,16 @@ namespace SH_ExamScoreCardReader.Properties {
         /// <summary>
         ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
         /// </summary>
+        internal static System.Drawing.Bitmap byte_add_64 {
+            get {
+                object obj = ResourceManager.GetObject("byte_add_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
         internal static System.Drawing.Bitmap loading {
             get {
                 object obj = ResourceManager.GetObject("loading", resourceCulture);
@@ -76,6 +86,16 @@ namespace SH_ExamScoreCardReader.Properties {
         internal static System.Drawing.Bitmap proyector_save_64 {
             get {
                 object obj = ResourceManager.GetObject("proyector_save_64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查詢類型 System.Drawing.Bitmap 的當地語系化資源。
+        /// </summary>
+        internal static System.Drawing.Bitmap 設定 {
+            get {
+                object obj = ResourceManager.GetObject("設定", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

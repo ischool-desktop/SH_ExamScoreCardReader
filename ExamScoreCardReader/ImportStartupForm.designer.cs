@@ -36,11 +36,13 @@
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
             this.cboSemester = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.lblMessage = new DevComponents.DotNetBar.LabelX();
-            this.pic = new System.Windows.Forms.PictureBox();
             this.intStudentNumberLenght = new DevComponents.Editors.IntegerInput();
             this.labelX3 = new DevComponents.DotNetBar.LabelX();
-            ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
+            this.btnExit = new DevComponents.DotNetBar.ButtonX();
+            this.checkBoxX1 = new DevComponents.DotNetBar.Controls.CheckBoxX();
+            this.pic = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.intStudentNumberLenght)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
             this.SuspendLayout();
             // 
             // txtFiles
@@ -51,10 +53,10 @@
             // 
             this.txtFiles.Border.Class = "TextBoxBorder";
             this.txtFiles.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txtFiles.Location = new System.Drawing.Point(13, 54);
+            this.txtFiles.Location = new System.Drawing.Point(13, 59);
             this.txtFiles.Name = "txtFiles";
             this.txtFiles.ReadOnly = true;
-            this.txtFiles.Size = new System.Drawing.Size(340, 25);
+            this.txtFiles.Size = new System.Drawing.Size(350, 25);
             this.txtFiles.TabIndex = 2;
             // 
             // btnBrowse
@@ -62,7 +64,7 @@
             this.btnBrowse.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btnBrowse.BackColor = System.Drawing.Color.Transparent;
             this.btnBrowse.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnBrowse.Location = new System.Drawing.Point(377, 54);
+            this.btnBrowse.Location = new System.Drawing.Point(374, 59);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(75, 25);
             this.btnBrowse.TabIndex = 0;
@@ -74,7 +76,7 @@
             this.btnImport.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.btnImport.BackColor = System.Drawing.Color.Transparent;
             this.btnImport.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.btnImport.Location = new System.Drawing.Point(377, 105);
+            this.btnImport.Location = new System.Drawing.Point(294, 153);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(75, 25);
             this.btnImport.TabIndex = 1;
@@ -102,7 +104,7 @@
             this.cboSchoolYear.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboSchoolYear.FormattingEnabled = true;
             this.cboSchoolYear.ItemHeight = 19;
-            this.cboSchoolYear.Location = new System.Drawing.Point(80, 12);
+            this.cboSchoolYear.Location = new System.Drawing.Point(75, 12);
             this.cboSchoolYear.Name = "cboSchoolYear";
             this.cboSchoolYear.Size = new System.Drawing.Size(70, 25);
             this.cboSchoolYear.TabIndex = 4;
@@ -116,7 +118,7 @@
             // 
             this.labelX2.BackgroundStyle.Class = "";
             this.labelX2.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX2.Location = new System.Drawing.Point(172, 13);
+            this.labelX2.Location = new System.Drawing.Point(162, 13);
             this.labelX2.Name = "labelX2";
             this.labelX2.Size = new System.Drawing.Size(32, 23);
             this.labelX2.TabIndex = 3;
@@ -129,9 +131,9 @@
             this.cboSemester.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboSemester.FormattingEnabled = true;
             this.cboSemester.ItemHeight = 19;
-            this.cboSemester.Location = new System.Drawing.Point(226, 12);
+            this.cboSemester.Location = new System.Drawing.Point(211, 12);
             this.cboSemester.Name = "cboSemester";
-            this.cboSemester.Size = new System.Drawing.Size(60, 25);
+            this.cboSemester.Size = new System.Drawing.Size(70, 25);
             this.cboSemester.TabIndex = 4;
             this.cboSemester.SelectedIndexChanged += new System.EventHandler(this.cboSemester_SelectedIndexChanged);
             // 
@@ -143,22 +145,11 @@
             // 
             this.lblMessage.BackgroundStyle.Class = "";
             this.lblMessage.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.lblMessage.Location = new System.Drawing.Point(56, 106);
+            this.lblMessage.Location = new System.Drawing.Point(13, 104);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(215, 23);
+            this.lblMessage.Size = new System.Drawing.Size(324, 23);
             this.lblMessage.TabIndex = 5;
-            this.lblMessage.Visible = false;
-            // 
-            // pic
-            // 
-            this.pic.BackColor = System.Drawing.Color.Transparent;
-            this.pic.Image = global::SH_ExamScoreCardReader.Properties.Resources.loading;
-            this.pic.Location = new System.Drawing.Point(13, 101);
-            this.pic.Name = "pic";
-            this.pic.Size = new System.Drawing.Size(32, 32);
-            this.pic.TabIndex = 6;
-            this.pic.TabStop = false;
-            this.pic.Visible = false;
+            this.lblMessage.Text = "訊息：";
             // 
             // intStudentNumberLenght
             // 
@@ -169,12 +160,12 @@
             this.intStudentNumberLenght.BackgroundStyle.Class = "DateTimeInputBackground";
             this.intStudentNumberLenght.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.intStudentNumberLenght.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
-            this.intStudentNumberLenght.Location = new System.Drawing.Point(391, 12);
+            this.intStudentNumberLenght.Location = new System.Drawing.Point(379, 12);
             this.intStudentNumberLenght.MaxValue = 10;
             this.intStudentNumberLenght.MinValue = 1;
             this.intStudentNumberLenght.Name = "intStudentNumberLenght";
             this.intStudentNumberLenght.ShowUpDown = true;
-            this.intStudentNumberLenght.Size = new System.Drawing.Size(61, 25);
+            this.intStudentNumberLenght.Size = new System.Drawing.Size(70, 25);
             this.intStudentNumberLenght.TabIndex = 7;
             this.intStudentNumberLenght.Value = 7;
             // 
@@ -186,16 +177,61 @@
             // 
             this.labelX3.BackgroundStyle.Class = "";
             this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX3.Location = new System.Drawing.Point(308, 12);
+            this.labelX3.Location = new System.Drawing.Point(304, 12);
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(61, 23);
             this.labelX3.TabIndex = 8;
             this.labelX3.Text = "學號長度";
             // 
+            // btnExit
+            // 
+            this.btnExit.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
+            this.btnExit.BackColor = System.Drawing.Color.Transparent;
+            this.btnExit.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
+            this.btnExit.Location = new System.Drawing.Point(374, 154);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(75, 23);
+            this.btnExit.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.btnExit.TabIndex = 9;
+            this.btnExit.Text = "離開";
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // checkBoxX1
+            // 
+            this.checkBoxX1.AutoSize = true;
+            this.checkBoxX1.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.checkBoxX1.BackgroundStyle.Class = "";
+            this.checkBoxX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.checkBoxX1.Checked = true;
+            this.checkBoxX1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxX1.CheckValue = "Y";
+            this.checkBoxX1.Location = new System.Drawing.Point(355, 109);
+            this.checkBoxX1.Name = "checkBoxX1";
+            this.checkBoxX1.Size = new System.Drawing.Size(94, 21);
+            this.checkBoxX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.checkBoxX1.TabIndex = 10;
+            this.checkBoxX1.Text = "略過小數點";
+            // 
+            // pic
+            // 
+            this.pic.BackColor = System.Drawing.Color.Transparent;
+            this.pic.Image = global::SH_ExamScoreCardReader.Properties.Resources.loading;
+            this.pic.Location = new System.Drawing.Point(13, 142);
+            this.pic.Name = "pic";
+            this.pic.Size = new System.Drawing.Size(32, 32);
+            this.pic.TabIndex = 6;
+            this.pic.TabStop = false;
+            this.pic.Visible = false;
+            // 
             // ImportStartupForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(464, 144);
+            this.ClientSize = new System.Drawing.Size(460, 188);
+            this.Controls.Add(this.checkBoxX1);
+            this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.intStudentNumberLenght);
@@ -212,9 +248,10 @@
             this.Name = "ImportStartupForm";
             this.Text = "匯入讀卡成績";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ImportStartupForm_FormClosed);
-            ((System.ComponentModel.ISupportInitialize)(this.pic)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.intStudentNumberLenght)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pic)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -231,5 +268,7 @@
         private System.Windows.Forms.PictureBox pic;
         private DevComponents.Editors.IntegerInput intStudentNumberLenght;
         private DevComponents.DotNetBar.LabelX labelX3;
+        private DevComponents.DotNetBar.ButtonX btnExit;
+        private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX1;
     }
 }

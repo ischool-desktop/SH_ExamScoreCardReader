@@ -31,7 +31,8 @@ namespace SH_ExamScoreCardReader
         private List<FileInfo> _files;
         private List<SHSCETakeRecord> _addScoreList;
         private List<SHSCETakeRecord> _deleteScoreList;
-
+        private Dictionary<string, SHSCETakeRecord> AddScoreDic;
+        private Dictionary<string, string> examDict;
         /// <summary>
         /// 儲存畫面上學號長度
         /// </summary>
@@ -85,9 +86,9 @@ namespace SH_ExamScoreCardReader
                 lblMessage.Text = "" + e.UserState;
             };
             _worker.DoWork += delegate(object sender, DoWorkEventArgs e)
-            {                
+            {
                 #region Worker DoWork
-                _worker.ReportProgress(0, "檢查讀卡文字格式…");
+                _worker.ReportProgress(0, "訊息：檢查讀卡文字格式…");
 
                 #region 檢查文字檔
                 ValidateTextFiles vtf = new ValidateTextFiles(intStudentNumberLenght.Value);
@@ -112,18 +113,31 @@ namespace SH_ExamScoreCardReader
 
                 #region 取得驗證需要的資料
                 SHCourse.RemoveAll();
-                _worker.ReportProgress(0, "取得學生資料…");
-                List<SHStudentRecord> studentList = GetInSchoolStudents();
-                
+                _worker.ReportProgress(5, "訊息：取得學生資料…");
+
+
+
+
+                List<StudentObj> studentList = GetInSchoolStudents();
+
                 List<string> s_ids = new List<string>();
                 Dictionary<string, List<string>> studentNumberToStudentIDs = new Dictionary<string, List<string>>();
-                foreach (SHStudentRecord student in studentList)
+                foreach (StudentObj student in studentList)
                 {
                     string sn = SCValidatorCreator.GetStudentNumberFormat(student.StudentNumber);
                     if (!studentNumberToStudentIDs.ContainsKey(sn))
                         studentNumberToStudentIDs.Add(sn, new List<string>());
-                    studentNumberToStudentIDs[sn].Add(student.ID);
+                    studentNumberToStudentIDs[sn].Add(student.StudentID);
                 }
+
+                foreach (string each in studentNumberToStudentIDs.Keys)
+                {
+                    if (studentNumberToStudentIDs[each].Count > 1)
+                    {
+                        //學號重覆
+                    }
+                }
+
                 foreach (var dr in drCollection)
                 {
                     if (studentNumberToStudentIDs.ContainsKey(dr.StudentNumber))
@@ -132,13 +146,13 @@ namespace SH_ExamScoreCardReader
 
                 studentList.Clear();
 
-                _worker.ReportProgress(0, "取得課程資料…");
+                _worker.ReportProgress(10, "訊息：取得課程資料…");
                 List<SHCourseRecord> courseList = SHCourse.SelectBySchoolYearAndSemester(SchoolYear, Semester);
                 List<SHAEIncludeRecord> aeList = SHAEInclude.SelectAll();
 
                 //List<JHSCAttendRecord> scaList = JHSCAttend.SelectAll();
                 var c_ids = from course in courseList select course.ID;
-                _worker.ReportProgress(0, "取得修課資料…");
+                _worker.ReportProgress(15, "訊息：取得修課資料…");
                 //List<JHSCAttendRecord> scaList2 = JHSCAttend.SelectByStudentIDAndCourseID(s_ids, c_ids.ToList<string>());
                 List<SHSCAttendRecord> scaList = new List<SHSCAttendRecord>();
                 FunctionSpliter<string, SHSCAttendRecord> spliter = new FunctionSpliter<string, SHSCAttendRecord>(300, 3);
@@ -147,13 +161,13 @@ namespace SH_ExamScoreCardReader
                     return SHSCAttend.Select(part, c_ids.ToList<string>(), null, SchoolYear.ToString(), Semester.ToString());
                 };
                 scaList = spliter.Execute(s_ids);
-                
-                _worker.ReportProgress(0, "取得試別資料…");
+
+                _worker.ReportProgress(20, "訊息：取得試別資料…");
                 List<SHExamRecord> examList = SHExam.SelectAll();
                 #endregion
 
                 #region 註冊驗證
-                _worker.ReportProgress(0, "載入驗證規則…");
+                _worker.ReportProgress(30, "訊息：載入驗證規則…");
                 _rawDataValidator.Register(new SubjectCodeValidator());
                 _rawDataValidator.Register(new ClassCodeValidator());
                 _rawDataValidator.Register(new ExamCodeValidator());
@@ -166,7 +180,7 @@ namespace SH_ExamScoreCardReader
                 #endregion
 
                 #region 進行驗證
-                _worker.ReportProgress(0, "進行驗證中…");
+                _worker.ReportProgress(45, "訊息：進行驗證中…");
                 List<string> msgList = new List<string>();
 
                 foreach (RawData rawData in rdCollection)
@@ -193,8 +207,12 @@ namespace SH_ExamScoreCardReader
                 #endregion
 
                 #region 取得學生的評量成績
+
+                _worker.ReportProgress(65, "訊息：取得學生評量成績…");
+
                 _deleteScoreList.Clear();
                 _addScoreList.Clear();
+                AddScoreDic.Clear();
 
                 //var student_ids = from student in scCreator.StudentNumberDictionary.Values select student.ID;
                 //List<string> course_ids = scCreator.AttendCourseIDs;
@@ -228,6 +246,8 @@ namespace SH_ExamScoreCardReader
                         scaTable.Add(key, sca);
                 }
 
+                _worker.ReportProgress(80, "訊息：成績資料建立…");
+
                 foreach (DataRecord dr in drCollection)
                 {
                     SHStudentRecord student = student = scCreator.StudentNumberDictionary[dr.StudentNumber];
@@ -251,13 +271,32 @@ namespace SH_ExamScoreCardReader
                         sh.RefExamID = exam.ID;
                         sh.RefSCAttendID = scaTable[GetCombineKey(student.ID, course.ID)].ID;
                         sh.RefStudentID = student.ID;
-                        sh.Score = dr.Score;
+
+                        if (checkBoxX1.Checked)
+                        {
+                            string qq = dr.Score.ToString();
+                            if (qq.Contains("."))
+                            {
+                                string[] kk = qq.Split('.');
+                                sh.Score = decimal.Parse(kk[0]);
+                            }
+                            else
+                            {
+                                sh.Score = dr.Score;
+                            }
+                        }
+                        else
+                        {
+                            sh.Score = dr.Score;
+                        }
+
                         //sceNew.Effort = _effortMapper.GetCodeByScore(dr.Score);
                         _addScoreList.Add(sh);
+                        AddScoreDic.Add(sh.RefStudentID + "_" + course.ID + "_" + exam.ID, sh);
                     }
                 }
                 #endregion
-
+                _worker.ReportProgress(100, "訊息：背景作業完成…");
                 e.Result = null;
                 #endregion
             };
@@ -275,7 +314,7 @@ namespace SH_ExamScoreCardReader
                         }
                         else
                         {
-                            lblMessage.Text = "成績上傳中…";
+                            lblMessage.Text = "訊息：成績上傳中…";
                             FISCA.Presentation.MotherForm.SetStatusBarMessage("成績上傳中…", 0);
                             counter = 0;
                             _upload.RunWorkerAsync();
@@ -323,7 +362,7 @@ namespace SH_ExamScoreCardReader
             {
                 _warn.ReportProgress(0, "產生警告訊息...");
 
-                Dictionary<string, string> examDict = new Dictionary<string, string>();
+                examDict = new Dictionary<string, string>();
                 foreach (SHExamRecord exam in SHExam.SelectAll())
                 {
                     if (!examDict.ContainsKey(exam.ID))
@@ -336,10 +375,11 @@ namespace SH_ExamScoreCardReader
                 {
                     // 當成績資料是空值跳過
                     //if (sce.Score.HasValue == false && sce.Effort.HasValue == false && string.IsNullOrEmpty(sce.Text))
-                    if (sce.Score == null && string.IsNullOrEmpty(sce.Text))
-                        continue;
-                    
-                        count++;
+                    //if (sce.Score == null && string.IsNullOrEmpty(sce.Text))
+                    //   continue;
+
+                    count++;
+
 
                     SHStudentRecord student = SHStudent.SelectByID(sce.RefStudentID);
                     SHCourseRecord course = SHCourse.SelectByID(sce.RefCourseID);
@@ -351,7 +391,18 @@ namespace SH_ExamScoreCardReader
                     if (!string.IsNullOrEmpty(student.StudentNumber)) s += " (" + student.StudentNumber + ")";
                     s += " " + student.Name;
 
-                    form.Add(student.ID, s, string.Format("學生在「{0}」課程「{1}」中已有成績。", course.Name, exam));
+                    string scoreName = sce.RefStudentID + "_" + sce.RefCourseID + "_" + sce.RefExamID;
+
+                    if (AddScoreDic.ContainsKey(scoreName))
+                    {
+                        form.AddMessage(student.ID, s, string.Format("學生在「{0}」課程「{1}」中已有成績「{2}」將修改為「{3}」。", course.Name, exam, sce.Score, AddScoreDic[scoreName].Score));
+
+                    }
+                    else
+                    {
+                        form.AddMessage(student.ID, s, string.Format("學生在「{0}」課程「{1}」中已有成績「{2}」。", course.Name, exam, sce.Score));
+                    }
+
                     _warn.ReportProgress((int)(count * 100 / _deleteScoreList.Count), "產生警告訊息...");
                 }
 
@@ -363,7 +414,7 @@ namespace SH_ExamScoreCardReader
 
                 if (form.ShowDialog() == DialogResult.OK)
                 {
-                    lblMessage.Text = "成績上傳中…";
+                    lblMessage.Text = "訊息：成績上傳中…";
                     FISCA.Presentation.MotherForm.SetStatusBarMessage("成績上傳中…", 0);
                     counter = 0;
                     _upload.RunWorkerAsync();
@@ -381,6 +432,8 @@ namespace SH_ExamScoreCardReader
             _files = new List<FileInfo>();
             _addScoreList = new List<SHSCETakeRecord>();
             _deleteScoreList = new List<SHSCETakeRecord>();
+            AddScoreDic = new Dictionary<string, SHSCETakeRecord>();
+            examDict = new Dictionary<string, string>();
         }
 
         void _upload_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -411,8 +464,8 @@ namespace SH_ExamScoreCardReader
                 ControlEnable = true;
             }
             catch (Exception ex)
-            { 
-                
+            {
+
             }
         }
 
@@ -420,100 +473,150 @@ namespace SH_ExamScoreCardReader
         // 上傳
         void _upload_DoWork(object sender, DoWorkEventArgs e)
         {
-                // 傳送與回傳筆數
-                int SendCount = 0, RspCount = 0;
-                // 刪除舊資料
-                SendCount = _deleteScoreList.Count;
+            // 傳送與回傳筆數
+            int SendCount = 0, RspCount = 0;
+            // 刪除舊資料
+            SendCount = _deleteScoreList.Count;
 
-                // 取得 del id
-                List<string> delIDList = _deleteScoreList.Select(x => x.ID).ToList();
+            // 取得 del id
+            List<string> delIDList = _deleteScoreList.Select(x => x.ID).ToList();
 
-                // 執行
-                try
-                {
-                    SHSCETake.Delete(_deleteScoreList);
-                }
-                catch (Exception ex)
-                {
-                    e.Result = ex.Message;
-                    e.Cancel = true;
-                }
+            // 執行
+            try
+            {
+                SHSCETake.Delete(_deleteScoreList);
+            }
+            catch (Exception ex)
+            {
+                e.Result = ex.Message;
+                e.Cancel = true;
+            }
             //    RspCount = JHSCETake.SelectByIDs(delIDList).Count;
 
             //// 刪除未完成
             //    if (RspCount > 0)
             //        e.Cancel = true;
 
-                try
-                {
-
-                    //新增資料，分筆上傳
-                    Dictionary<int, List<SHSCETakeRecord>> batchDict = new Dictionary<int, List<SHSCETakeRecord>>();
-                    int bn = 150;
-                    int n1 = (int)(_addScoreList.Count / bn);
-
-                    if ((_addScoreList.Count % bn) != 0)
-                        n1++;
-
-                    for (int i = 0; i <= n1; i++)
-                        batchDict.Add(i, new List<SHSCETakeRecord>());
-
-
-                    if (_addScoreList.Count > 0)
-                    {
-                        int idx = 0, count = 1;
-                        // 分批
-                        foreach (SHSCETakeRecord rec in _addScoreList)
-                        {
-                            // 100 分一批
-                            if ((count % bn) == 0)
-                                idx++;
-
-                            batchDict[idx].Add(rec);
-                            count++;
-                        }
-                    }
-
-
-                    // 上傳資料
-                    foreach (KeyValuePair<int, List<SHSCETakeRecord>> data in batchDict)
-                    {
-                        SendCount = 0; RspCount = 0;
-                        if (data.Value.Count > 0)
-                        {
-                            SendCount = data.Value.Count;
-                            try
-                            {
-                                SHSCETake.Insert(data.Value);
-                            }
-                            catch (Exception ex)
-                            {
-                                e.Cancel = true;
-                                e.Result = ex.Message;
-                            }
-
-                            counter += SendCount;
-
-                        }
-                    }
-                    e.Result = _addScoreList.Count;
-                }
-                catch (Exception ex)
-                {
-                    e.Result = ex.Message;
-                    e.Cancel = true;
-                
-                }
-        }
-        
-        private List<SHStudentRecord> GetInSchoolStudents()
-        {
-            List<SHStudentRecord> list = new List<SHStudentRecord>();
-            foreach (SHStudentRecord student in SHStudent.SelectAll())
+            try
             {
-                if (student.Status == StudentRecord.StudentStatus.一般 ||
-                    student.Status == StudentRecord.StudentStatus.輟學)
-                    list.Add(student);
+                #region 新增資料，分筆上傳
+
+                Dictionary<int, List<SHSCETakeRecord>> batchDict = new Dictionary<int, List<SHSCETakeRecord>>();
+                int bn = 150;
+                int n1 = (int)(_addScoreList.Count / bn);
+
+                if ((_addScoreList.Count % bn) != 0)
+                    n1++;
+
+                for (int i = 0; i <= n1; i++)
+                    batchDict.Add(i, new List<SHSCETakeRecord>());
+
+
+                if (_addScoreList.Count > 0)
+                {
+                    int idx = 0, count = 1;
+                    // 分批
+                    foreach (SHSCETakeRecord rec in _addScoreList)
+                    {
+                        // 100 分一批
+                        if ((count % bn) == 0)
+                            idx++;
+
+                        batchDict[idx].Add(rec);
+                        count++;
+                    }
+                }
+
+
+                // 上傳資料
+                foreach (KeyValuePair<int, List<SHSCETakeRecord>> data in batchDict)
+                {
+                    SendCount = 0; RspCount = 0;
+                    if (data.Value.Count > 0)
+                    {
+                        SendCount = data.Value.Count;
+                        try
+                        {
+                            SHSCETake.Insert(data.Value);
+                        }
+                        catch (Exception ex)
+                        {
+                            e.Cancel = true;
+                            e.Result = ex.Message;
+                        }
+
+                        counter += SendCount;
+
+                    }
+                }
+
+                SetLog();
+
+                e.Result = _addScoreList.Count;
+
+
+
+
+
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                e.Result = ex.Message;
+                e.Cancel = true;
+
+            }
+        }
+
+        private void SetLog()
+        {
+            StringBuilder sbLog = new StringBuilder();
+            Dictionary<string, SHSCETakeRecord> delDic = new Dictionary<string, SHSCETakeRecord>();
+            foreach (SHSCETakeRecord sce in _deleteScoreList)
+            {
+                if (!delDic.ContainsKey(sce.RefStudentID + "_" + sce.RefCourseID))
+                {
+                    delDic.Add(sce.RefStudentID + "_" + sce.RefCourseID, sce);
+                }
+            }
+
+            foreach (SHSCETakeRecord sce in _addScoreList)
+            {
+                SHStudentRecord student = SHStudent.SelectByID(sce.RefStudentID);
+                SHCourseRecord course = SHCourse.SelectByID(sce.RefCourseID);
+                string exam = (examDict.ContainsKey(sce.RefExamID) ? examDict[sce.RefExamID] : "<未知的試別>");
+
+                if (delDic.ContainsKey(sce.RefStudentID + "_" + sce.RefCourseID))
+                {
+                    string classname = student.Class != null ? student.Class.Name : "";
+                    string seatno = student.SeatNo.HasValue ? student.SeatNo.Value.ToString() : "";
+                    sbLog.AppendLine(string.Format("班級「{0}」座號「{1}」姓名「{2}」在試別「{3}」課程「{4}」將成績「{5}」修改為「{6}」。", classname, seatno, student.Name, course.Name, exam, delDic[sce.RefStudentID + "_" + sce.RefCourseID].Score, sce.Score));
+
+                }
+                else
+                {
+                    string classname = student.Class != null ? student.Class.Name : "";
+                    string seatno = student.SeatNo.HasValue ? student.SeatNo.Value.ToString() : "";
+                    sbLog.AppendLine(string.Format("班級「{0}」座號「{1}」姓名「{2}」在「{3}」課程「{4}」新增成績「{5}」。", classname, seatno, student.Name, course.Name, exam, sce.Score));
+
+                }
+            }
+
+            FISCA.LogAgent.ApplicationLog.Log("讀卡系統", "評量成績", sbLog.ToString());
+        }
+
+        private List<StudentObj> GetInSchoolStudents()
+        {
+            List<StudentObj> list = new List<StudentObj>();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("select id,student_number from student where status in (1) and student_number is not null");
+            DataTable dt = tool._Q.Select(sb.ToString());
+
+            foreach (DataRow row in dt.Rows)
+            {
+                StudentObj obj = new StudentObj(row);
+
+                list.Add(obj);
             }
             return list;
         }
@@ -611,6 +714,11 @@ namespace SH_ExamScoreCardReader
         private void ImportStartupForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             FISCA.Presentation.MotherForm.SetStatusBarMessage("");
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -19,7 +19,10 @@ namespace SH_ExamScoreCardReader
             lblTempCount.Text = "" + K12.Presentation.NLDPanels.Student.TempSource.Count;
         }
 
-        public void Add(string id, string itemDisplay, string message)
+        /// <summary>
+        /// 加入提示訊息
+        /// </summary>
+        public void AddMessage(string id, string itemDisplay, string message)
         {
             DataGridViewRow row = new DataGridViewRow();
             row.CreateCells(dgv, id, itemDisplay, message);
@@ -68,7 +71,8 @@ namespace SH_ExamScoreCardReader
 
         private void WarningForm_Shown(object sender, EventArgs e)
         {
-            MsgBox.Show("有 " + dgv.Rows.Count + " 位學生已有成績，點選「" + btnGoOn.Text + "」會將原有的成績覆蓋。");
+            labelX2.Text = "有 " + dgv.Rows.Count + " 位學生已有成績，點選「" + btnGoOn.Text + "」會將原有的成績覆蓋。";
+            //MsgBox.Show("有 " + dgv.Rows.Count + " 位學生已有成績，點選「" + btnGoOn.Text + "」會將原有的成績覆蓋。");
             btnGoOn.Focus();
         }
     }
