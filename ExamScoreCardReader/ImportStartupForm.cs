@@ -33,13 +33,17 @@ namespace SH_ExamScoreCardReader
         private List<SHSCETakeRecord> _deleteScoreList;
         private Dictionary<string, SHSCETakeRecord> AddScoreDic;
         private Dictionary<string, string> examDict;
+
+        StringBuilder sbLog { get; set; }
         /// <summary>
         /// 儲存畫面上學號長度
         /// </summary>
         K12.Data.Configuration.ConfigData cd;
 
-        private string _StudentNumberLenght = "國中匯入讀卡學號長度";
-        private string _StudentNumberLenghtName = "StudentNumberLenght";
+        private string _ExamScoreReaderConfig = "高中讀卡系統設定檔";
+
+        private string _StudentDotIsClear = "是否移除小數點後內容";
+        private string _StudentNumberLenghtName = "國中匯入讀卡學號長度";
 
         //高中系統努力程度已無使用
         //private EffortMapper _effortMapper;
@@ -51,11 +55,18 @@ namespace SH_ExamScoreCardReader
         /// </summary>
         private void LoadConfigData()
         {
-            int val = 7;
-            cd = School.Configuration[_StudentNumberLenght];
+            cd = School.Configuration[_ExamScoreReaderConfig];
+
+            int val1 = 7;
             Global.StudentNumberLenght = intStudentNumberLenght.Value;
-            if (int.TryParse(cd[_StudentNumberLenghtName], out val))
-                intStudentNumberLenght.Value = val;
+            if (int.TryParse(cd[_StudentNumberLenghtName], out val1))
+                intStudentNumberLenght.Value = val1;
+
+            bool val2 = false;
+            Global.StudentDocRemove = val2; //預設是不移除
+            if (bool.TryParse(cd[_StudentDotIsClear], out val2))
+                checkBoxX1.Checked = val2;
+
         }
 
 
@@ -272,9 +283,13 @@ namespace SH_ExamScoreCardReader
                         sh.RefSCAttendID = scaTable[GetCombineKey(student.ID, course.ID)].ID;
                         sh.RefStudentID = student.ID;
 
-                        if (checkBoxX1.Checked)
+                        //轉型Double再轉回decimal,可去掉小數點後的0
+                        double reScore = (double)dr.Score;
+                        decimal Score = decimal.Parse(reScore.ToString());
+
+                        if (Global.StudentDocRemove)
                         {
-                            string qq = dr.Score.ToString();
+                            string qq = Score.ToString();
                             if (qq.Contains("."))
                             {
                                 string[] kk = qq.Split('.');
@@ -282,17 +297,23 @@ namespace SH_ExamScoreCardReader
                             }
                             else
                             {
-                                sh.Score = dr.Score;
+                                //
+                                sh.Score = decimal.Parse(Score.ToString());
                             }
                         }
                         else
                         {
-                            sh.Score = dr.Score;
+                            sh.Score = decimal.Parse(Score.ToString());
                         }
 
                         //sceNew.Effort = _effortMapper.GetCodeByScore(dr.Score);
-                        _addScoreList.Add(sh);
-                        AddScoreDic.Add(sh.RefStudentID + "_" + course.ID + "_" + exam.ID, sh);
+
+                        //是否有重覆的學生,課程,評量
+                        if (!AddScoreDic.ContainsKey(sh.RefStudentID + "_" + course.ID + "_" + exam.ID))
+                        {
+                            _addScoreList.Add(sh);
+                            AddScoreDic.Add(sh.RefStudentID + "_" + course.ID + "_" + exam.ID, sh);
+                        }
                     }
                 }
                 #endregion
@@ -444,28 +465,27 @@ namespace SH_ExamScoreCardReader
         // 上傳成績完成
         void _upload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            try
+            ControlEnable = true;
+
+            if (!e.Cancelled)
             {
-
-                string msg = "";
-                if (e.Result != null)
-                    msg = e.Result.ToString();
-
-                if (e.Cancelled)
+                if (e.Error == null)
                 {
-                    FISCA.Presentation.MotherForm.SetStatusBarMessage("匯入失敗");
-                    MsgBox.Show("匯入失敗" + msg);
+                    string msg = "";
+
+                    if (e.Result != null)
+                        msg = e.Result.ToString();
+
+                    FISCA.Presentation.MotherForm.SetStatusBarMessage("匯入評量讀卡成績已完成!!共" + msg + "筆");
+
+                    LogViewFrom lv = new LogViewFrom(sbLog.ToString());
+                    lv.ShowDialog();
                 }
-                else
-                {
-                    FISCA.Presentation.MotherForm.SetStatusBarMessage("匯入完成");
-                    MsgBox.Show("匯入完成,共匯入" + msg + "筆.");
-                }
-                ControlEnable = true;
             }
-            catch (Exception ex)
+            else
             {
-
+                FISCA.Presentation.MotherForm.SetStatusBarMessage("匯入作業已中止!!");
+                MsgBox.Show("匯入作業已中止!!");
             }
         }
 
@@ -570,7 +590,7 @@ namespace SH_ExamScoreCardReader
 
         private void SetLog()
         {
-            StringBuilder sbLog = new StringBuilder();
+            sbLog = new StringBuilder();
             Dictionary<string, SHSCETakeRecord> delDic = new Dictionary<string, SHSCETakeRecord>();
             foreach (SHSCETakeRecord sce in _deleteScoreList)
             {

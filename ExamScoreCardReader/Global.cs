@@ -19,5 +19,10 @@ namespace SH_ExamScoreCardReader
         /// 學號長度
         /// </summary>
         public static int StudentNumberLenght=0;
+
+        /// <summary>
+        /// 是否移除小數點後位
+        /// </summary>
+        public static bool StudentDocRemove = false;
     }
 }
