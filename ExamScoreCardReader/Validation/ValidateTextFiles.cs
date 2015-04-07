@@ -11,13 +11,13 @@ namespace SH_ExamScoreCardReader.Validation
     {
         //學號{7}，班級{3}，座號{2}，試別{2}，科目{5}，成績{6}
         //成績 = 000.00
-//        private const string format = @"^(\d{7})\d{3}\d{2}(\d{2}\d{5})([\d| ]\d{2}| [\d| ]\d)\.\d{2}$";
+        //        private const string format = @"^(\d{7})\d{3}\d{2}(\d{2}\d{5})([\d| ]\d{2}| [\d| ]\d)\.\d{2}$";
         // private const string format = @"^(\d{7})(\d{3})\d{2}(\d{2})(\d{5})(([\d| ]\d{2}| [\d| ]\d)\.\d{2})$";
-        
+
         //學號
-        private const string formatB = @"^(\d{";
-        
-        private const string formatE = @"})(\d{3})\d{2}(\d{2})(\d{5})(([\d| ]\d{2}| [\d| ]\d)\.\d{2})$";
+        private const string formatB = @"^([\d|\s]{";
+
+        private const string formatE = @"})\s*([\d|\s]{3})\d{2}([\d|\s]{2})([\d|\s]{5})(([\d| ]\d{2}| [\d| ]\d)\.\d{2})$";
         private const string format2 = @"^%(.*):(\d+)%(.*)";
 
         //範例:   3350011 301 01 02 90001 78.45
@@ -28,8 +28,7 @@ namespace SH_ExamScoreCardReader.Validation
         public ValidateTextFiles(int StudentNumberLenght)
         {
             Global.TextFormat = @formatB + StudentNumberLenght + @formatE;
-            
-            
+
             re = new Regex(Global.TextFormat);
             reline = new Regex(format2);
         }
@@ -37,7 +36,7 @@ namespace SH_ExamScoreCardReader.Validation
         internal ValidateTextResult CheckFormat(List<FileInfo> _files)
         {
             Dictionary<string, List<int>> uniqueCounter = new Dictionary<string, List<int>>();
-            
+
             // 加這檢查主要處理匯入檔案內學號被不同班級座號重複使用
             Dictionary<string, List<string>> CheckStudNumberClassSeatNoDict = new Dictionary<string, List<string>>();
 
@@ -58,7 +57,7 @@ namespace SH_ExamScoreCardReader.Validation
                     if (m.Success) //格式正確
                     {
                         //學號{7}，班級{3}，座號{2}，試別{2}，科目{5}
-                        string key = m.Groups[1].Value + m.Groups[2].Value+m.Groups[3].Value +m.Groups[4].Value +m.Groups[5].Value;
+                        string key = m.Groups[1].Value + m.Groups[2].Value + m.Groups[3].Value + m.Groups[4].Value + m.Groups[5].Value;
 
                         // 學號
                         string key1 = m.Groups[1].Value;
@@ -144,13 +143,13 @@ namespace SH_ExamScoreCardReader.Validation
                 {
                     error = true;
                     errorFormatLineIndexes.Add(errorIdx);
-                        string msg=" (學號：" + data.Key + ", 有2位學生使用，請檢查!)";
-                    
-                    if(lineIndexes.ContainsKey(errorIdx))
-                        lineIndexes[errorIdx]+= msg;
+                    string msg = " (學號：" + data.Key + ", 有2位學生使用，請檢查!)";
+
+                    if (lineIndexes.ContainsKey(errorIdx))
+                        lineIndexes[errorIdx] += msg;
                     else
-                        lineIndexes.Add(errorIdx,msg);
-                    
+                        lineIndexes.Add(errorIdx, msg);
+
                 }
                 errorIdx++;
             }
@@ -175,7 +174,7 @@ namespace SH_ExamScoreCardReader.Validation
         public Dictionary<int, string> LineIndexes { get; set; }
         public List<int> ErrorFormatLineIndexes { get; set; }
         public List<int> DuplicateLineIndexes { get; set; }
-        
+
         public ValidateTextResult()
         {
             Error = false;

@@ -23,7 +23,7 @@ namespace SH_ExamScoreCardReader.Model
             _raw = raw;
             Subjects = new List<string>();
 
-            StudentNumber = _raw.StudentNumber;
+            StudentNumber = _raw.StudentNumber.Trim();
             Class = ClassCodeMapper.Instance.Map(_raw.ClassCode);
             SeatNo = _raw.SeatNo;
             Exam = ExamCodeMapper.Instance.Map(_raw.ExamCode);

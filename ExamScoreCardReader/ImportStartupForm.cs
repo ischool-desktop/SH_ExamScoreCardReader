@@ -18,6 +18,7 @@ namespace SH_ExamScoreCardReader
 {
     public partial class ImportStartupForm : BaseForm
     {
+        private int StudentNumberMax = 7;
         private BackgroundWorker _worker;
         private BackgroundWorker _upload;
         private BackgroundWorker _warn;
@@ -58,9 +59,9 @@ namespace SH_ExamScoreCardReader
             cd = School.Configuration[_ExamScoreReaderConfig];
 
             int val1 = 7;
-            Global.StudentNumberLenght = intStudentNumberLenght.Value;
-            if (int.TryParse(cd[_StudentNumberLenghtName], out val1))
-                intStudentNumberLenght.Value = val1;
+            Global.StudentNumberLenght = StudentNumberMax;
+            //if (int.TryParse(cd[_StudentNumberLenghtName], out val1))
+            //    intStudentNumberLenght.Value = val1;
 
             bool val2 = false;
             Global.StudentDocRemove = val2; //預設是不移除
@@ -75,8 +76,8 @@ namespace SH_ExamScoreCardReader
         /// </summary>
         private void SaveConfigData()
         {
-            Global.StudentNumberLenght = intStudentNumberLenght.Value;
-            cd[_StudentNumberLenghtName] = intStudentNumberLenght.Value.ToString();
+            Global.StudentNumberLenght = StudentNumberMax;
+            cd[_StudentNumberLenghtName] =StudentNumberMax.ToString();
             cd.Save();
         }
 
@@ -102,7 +103,7 @@ namespace SH_ExamScoreCardReader
                 _worker.ReportProgress(0, "訊息：檢查讀卡文字格式…");
 
                 #region 檢查文字檔
-                ValidateTextFiles vtf = new ValidateTextFiles(intStudentNumberLenght.Value);
+                ValidateTextFiles vtf = new ValidateTextFiles(StudentNumberMax);
                 ValidateTextResult vtResult = vtf.CheckFormat(_files);
                 if (vtResult.Error)
                 {
@@ -126,16 +127,13 @@ namespace SH_ExamScoreCardReader
                 SHCourse.RemoveAll();
                 _worker.ReportProgress(5, "訊息：取得學生資料…");
 
-
-
-
                 List<StudentObj> studentList = GetInSchoolStudents();
 
                 List<string> s_ids = new List<string>();
                 Dictionary<string, List<string>> studentNumberToStudentIDs = new Dictionary<string, List<string>>();
                 foreach (StudentObj student in studentList)
                 {
-                    string sn = SCValidatorCreator.GetStudentNumberFormat(student.StudentNumber);
+                    string sn = student.StudentNumber;// SCValidatorCreator.GetStudentNumberFormat(student.StudentNumber);
                     if (!studentNumberToStudentIDs.ContainsKey(sn))
                         studentNumberToStudentIDs.Add(sn, new List<string>());
                     studentNumberToStudentIDs[sn].Add(student.StudentID);

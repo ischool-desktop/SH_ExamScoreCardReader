@@ -36,12 +36,9 @@
             this.labelX2 = new DevComponents.DotNetBar.LabelX();
             this.cboSemester = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.lblMessage = new DevComponents.DotNetBar.LabelX();
-            this.intStudentNumberLenght = new DevComponents.Editors.IntegerInput();
-            this.labelX3 = new DevComponents.DotNetBar.LabelX();
             this.btnExit = new DevComponents.DotNetBar.ButtonX();
             this.checkBoxX1 = new DevComponents.DotNetBar.Controls.CheckBoxX();
             this.pic = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.intStudentNumberLenght)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
             this.SuspendLayout();
             // 
@@ -151,38 +148,6 @@
             this.lblMessage.TabIndex = 5;
             this.lblMessage.Text = "訊息：";
             // 
-            // intStudentNumberLenght
-            // 
-            this.intStudentNumberLenght.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.intStudentNumberLenght.BackgroundStyle.Class = "DateTimeInputBackground";
-            this.intStudentNumberLenght.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.intStudentNumberLenght.ButtonFreeText.Shortcut = DevComponents.DotNetBar.eShortcut.F2;
-            this.intStudentNumberLenght.Location = new System.Drawing.Point(379, 12);
-            this.intStudentNumberLenght.MaxValue = 10;
-            this.intStudentNumberLenght.MinValue = 1;
-            this.intStudentNumberLenght.Name = "intStudentNumberLenght";
-            this.intStudentNumberLenght.ShowUpDown = true;
-            this.intStudentNumberLenght.Size = new System.Drawing.Size(70, 25);
-            this.intStudentNumberLenght.TabIndex = 7;
-            this.intStudentNumberLenght.Value = 7;
-            // 
-            // labelX3
-            // 
-            this.labelX3.BackColor = System.Drawing.Color.Transparent;
-            // 
-            // 
-            // 
-            this.labelX3.BackgroundStyle.Class = "";
-            this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX3.Location = new System.Drawing.Point(304, 12);
-            this.labelX3.Name = "labelX3";
-            this.labelX3.Size = new System.Drawing.Size(61, 23);
-            this.labelX3.TabIndex = 8;
-            this.labelX3.Text = "學號長度";
-            // 
             // btnExit
             // 
             this.btnExit.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
@@ -234,10 +199,8 @@
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.btnBrowse);
-            this.Controls.Add(this.intStudentNumberLenght);
             this.Controls.Add(this.cboSemester);
             this.Controls.Add(this.cboSchoolYear);
-            this.Controls.Add(this.labelX3);
             this.Controls.Add(this.pic);
             this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.labelX2);
@@ -248,7 +211,6 @@
             this.Name = "ImportStartupForm";
             this.Text = "匯入讀卡成績";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ImportStartupForm_FormClosed);
-            ((System.ComponentModel.ISupportInitialize)(this.intStudentNumberLenght)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pic)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -266,8 +228,6 @@
         private DevComponents.DotNetBar.Controls.ComboBoxEx cboSemester;
         private DevComponents.DotNetBar.LabelX lblMessage;
         private System.Windows.Forms.PictureBox pic;
-        private DevComponents.Editors.IntegerInput intStudentNumberLenght;
-        private DevComponents.DotNetBar.LabelX labelX3;
         private DevComponents.DotNetBar.ButtonX btnExit;
         private DevComponents.DotNetBar.Controls.CheckBoxX checkBoxX1;
     }

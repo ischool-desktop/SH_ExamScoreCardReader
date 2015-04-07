@@ -113,8 +113,8 @@ namespace SH_ExamScoreCardReader
         {
             int i;
             string code = "" + cell.Value;
-            if (code.Length != num)
-                cell.ErrorText = "代碼必須為 " + num + " 位數";
+            if (code.Length >5)
+                cell.ErrorText = "代碼最長為 5 位數";
             else if (!int.TryParse(code, out i))
                 cell.ErrorText = "代碼必須為數字";
             else

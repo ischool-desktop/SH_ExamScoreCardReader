@@ -35,10 +35,10 @@ namespace SH_ExamScoreCardReader.Model
             Match match = re.Match(original);
             if (match.Success)
             {
-                StudentNumber = match.Groups[1].Value;
-                ClassCode = match.Groups[2].Value;
+                StudentNumber = match.Groups[1].Value.Trim();
+                ClassCode = match.Groups[2].Value.Trim();
                 ExamCode = match.Groups[3].Value;
-                SubjectCode = match.Groups[4].Value;
+                SubjectCode = match.Groups[4].Value.Trim();
                 Score = match.Groups[5].Value;
             }
             else { } // 理論上，進來的資料格式都應該正確。

@@ -31,8 +31,10 @@ namespace SH_ExamScoreCardReader.Mapper
 
         public string Map(string code)
         {
-            if (CodeMap.ContainsKey(code))
-                return CodeMap[code];
+            string c = code.Trim();
+
+            if (CodeMap.ContainsKey(c))
+                return CodeMap[c];
             else
                 return string.Empty;
         }

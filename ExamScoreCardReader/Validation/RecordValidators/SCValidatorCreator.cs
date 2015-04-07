@@ -31,7 +31,7 @@ namespace SH_ExamScoreCardReader.Validation.RecordValidators
             {
                 string studentNumber = student.StudentNumber;
 
-                studentNumber = GetStudentNumberFormat(studentNumber);
+                //studentNumber = GetStudentNumberFormat(studentNumber);
 
                 if (!_studentDict.ContainsKey(studentNumber))
                     _studentDict.Add(studentNumber, student);
@@ -61,17 +61,18 @@ namespace SH_ExamScoreCardReader.Validation.RecordValidators
             }
         }
 
-        internal static string GetStudentNumberFormat(string studentNumber)
-        {
-            #region 學號不足位，左邊補0
-            int StudentNumberLength =Global.StudentNumberLenght;
-            int s = StudentNumberLength - studentNumber.Length;
-            if (s > 0)
-                return studentNumber.PadLeft(StudentNumberLength, '0');
-            else
-                return studentNumber;
-            #endregion
-        }
+        //不明原因需要補 0，造成匯不進去，所以註解掉。
+        //internal static string GetStudentNumberFormat(string studentNumber)
+        //{
+        //    #region 學號不足位，左邊補0
+        //    int StudentNumberLength =Global.StudentNumberLenght;
+        //    int s = StudentNumberLength - studentNumber.Length;
+        //    if (s > 0)
+        //        return studentNumber.PadLeft(StudentNumberLength, '0');
+        //    else
+        //        return studentNumber;
+        //    #endregion
+        //}
 
         internal IRecordValidator<DataRecord> CreateStudentValidator()
         {
@@ -103,7 +104,7 @@ namespace SH_ExamScoreCardReader.Validation.RecordValidators
         {
             if (string.IsNullOrEmpty(student.StudentNumber)) return;
 
-            string studentNumber = SCValidatorCreator.GetStudentNumberFormat(student.StudentNumber);
+            string studentNumber = student.StudentNumber;// SCValidatorCreator.GetStudentNumberFormat(student.StudentNumber);
 
             if (!studentNumberTable.ContainsKey(studentNumber))
                 studentNumberTable.Add(studentNumber, student.ID);
